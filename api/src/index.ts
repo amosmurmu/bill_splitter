@@ -1,7 +1,10 @@
-import { Hono } from 'hono'
+import { Hono } from "hono";
+import homes from "./routes/home.routes";
 
-const app = new Hono<{ Bindings: Env }>()
+const app = new Hono<{ Bindings: Env }>();
 
-app.get('/api/health', (c) => c.json({ status: 'ok' }))
+app.get("/api/health", (c) => c.json({ status: "ok" }));
 
-export default app
+app.route("/api", homes);
+
+export default app;
