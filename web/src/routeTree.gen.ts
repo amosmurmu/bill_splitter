@@ -11,6 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HomesHomeIdRouteImport } from './routes/homes/$homeId'
+import { Route as HomesHomeIdBalancesRouteImport } from './routes/homes/$homeId.balances'
+import { Route as HomesHomeIdBillsRouteImport } from './routes/homes/$homeId.bills'
+import { Route as HomesHomeIdBillsBillIdRouteImport } from './routes/homes/$homeId.bills.$billId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +25,71 @@ const HomesHomeIdRoute = HomesHomeIdRouteImport.update({
   path: '/homes/$homeId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HomesHomeIdBalancesRoute = HomesHomeIdBalancesRouteImport.update({
+  id: '/balances',
+  path: '/balances',
+  getParentRoute: () => HomesHomeIdRoute,
+} as any)
+const HomesHomeIdBillsRoute = HomesHomeIdBillsRouteImport.update({
+  id: '/bills',
+  path: '/bills',
+  getParentRoute: () => HomesHomeIdRoute,
+} as any)
+const HomesHomeIdBillsBillIdRoute = HomesHomeIdBillsBillIdRouteImport.update({
+  id: '/$billId',
+  path: '/$billId',
+  getParentRoute: () => HomesHomeIdBillsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/homes/$homeId': typeof HomesHomeIdRoute
+  '/homes/$homeId': typeof HomesHomeIdRouteWithChildren
+  '/homes/$homeId/balances': typeof HomesHomeIdBalancesRoute
+  '/homes/$homeId/bills': typeof HomesHomeIdBillsRouteWithChildren
+  '/homes/$homeId/bills/$billId': typeof HomesHomeIdBillsBillIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/homes/$homeId': typeof HomesHomeIdRoute
+  '/homes/$homeId': typeof HomesHomeIdRouteWithChildren
+  '/homes/$homeId/balances': typeof HomesHomeIdBalancesRoute
+  '/homes/$homeId/bills': typeof HomesHomeIdBillsRouteWithChildren
+  '/homes/$homeId/bills/$billId': typeof HomesHomeIdBillsBillIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/homes/$homeId': typeof HomesHomeIdRoute
+  '/homes/$homeId': typeof HomesHomeIdRouteWithChildren
+  '/homes/$homeId/balances': typeof HomesHomeIdBalancesRoute
+  '/homes/$homeId/bills': typeof HomesHomeIdBillsRouteWithChildren
+  '/homes/$homeId/bills/$billId': typeof HomesHomeIdBillsBillIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/homes/$homeId'
+  fullPaths:
+    | '/'
+    | '/homes/$homeId'
+    | '/homes/$homeId/balances'
+    | '/homes/$homeId/bills'
+    | '/homes/$homeId/bills/$billId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/homes/$homeId'
-  id: '__root__' | '/' | '/homes/$homeId'
+  to:
+    | '/'
+    | '/homes/$homeId'
+    | '/homes/$homeId/balances'
+    | '/homes/$homeId/bills'
+    | '/homes/$homeId/bills/$billId'
+  id:
+    | '__root__'
+    | '/'
+    | '/homes/$homeId'
+    | '/homes/$homeId/balances'
+    | '/homes/$homeId/bills'
+    | '/homes/$homeId/bills/$billId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  HomesHomeIdRoute: typeof HomesHomeIdRoute
+  HomesHomeIdRoute: typeof HomesHomeIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +108,58 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomesHomeIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/homes/$homeId/balances': {
+      id: '/homes/$homeId/balances'
+      path: '/balances'
+      fullPath: '/homes/$homeId/balances'
+      preLoaderRoute: typeof HomesHomeIdBalancesRouteImport
+      parentRoute: typeof HomesHomeIdRoute
+    }
+    '/homes/$homeId/bills': {
+      id: '/homes/$homeId/bills'
+      path: '/bills'
+      fullPath: '/homes/$homeId/bills'
+      preLoaderRoute: typeof HomesHomeIdBillsRouteImport
+      parentRoute: typeof HomesHomeIdRoute
+    }
+    '/homes/$homeId/bills/$billId': {
+      id: '/homes/$homeId/bills/$billId'
+      path: '/$billId'
+      fullPath: '/homes/$homeId/bills/$billId'
+      preLoaderRoute: typeof HomesHomeIdBillsBillIdRouteImport
+      parentRoute: typeof HomesHomeIdBillsRoute
+    }
   }
 }
 
+interface HomesHomeIdBillsRouteChildren {
+  HomesHomeIdBillsBillIdRoute: typeof HomesHomeIdBillsBillIdRoute
+}
+
+const HomesHomeIdBillsRouteChildren: HomesHomeIdBillsRouteChildren = {
+  HomesHomeIdBillsBillIdRoute: HomesHomeIdBillsBillIdRoute,
+}
+
+const HomesHomeIdBillsRouteWithChildren =
+  HomesHomeIdBillsRoute._addFileChildren(HomesHomeIdBillsRouteChildren)
+
+interface HomesHomeIdRouteChildren {
+  HomesHomeIdBalancesRoute: typeof HomesHomeIdBalancesRoute
+  HomesHomeIdBillsRoute: typeof HomesHomeIdBillsRouteWithChildren
+}
+
+const HomesHomeIdRouteChildren: HomesHomeIdRouteChildren = {
+  HomesHomeIdBalancesRoute: HomesHomeIdBalancesRoute,
+  HomesHomeIdBillsRoute: HomesHomeIdBillsRouteWithChildren,
+}
+
+const HomesHomeIdRouteWithChildren = HomesHomeIdRoute._addFileChildren(
+  HomesHomeIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  HomesHomeIdRoute: HomesHomeIdRoute,
+  HomesHomeIdRoute: HomesHomeIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
