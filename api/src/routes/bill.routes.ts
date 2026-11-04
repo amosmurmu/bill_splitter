@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
-import { createBillSchema } from '../validators/bills.validators'
-import groupBills from '../utils/groupBills'
 import type { BillRow } from '../types/bills.types'
+import groupBills from '../utils/groupBills'
+import { createBillSchema } from '../validators/bills.validators'
 
 const bills = new Hono<{ Bindings: Env }>()
 
@@ -25,7 +25,7 @@ bills.get('/homes/:homeId/bills', async (c) => {
     LEFT JOIN members m ON m.id = bs.member_id
     WHERE b.home_id = ?
     ORDER BY b.rowid DESC, m.position ASC
-  `
+  `,
   )
     .bind(homeId)
     .all<BillRow>()
@@ -53,7 +53,7 @@ bills.get('/homes/:homeId/bills/:billId', async (c) => {
     LEFT JOIN members m ON m.id = bs.member_id
     WHERE b.home_id = ? AND b.id = ?
     ORDER BY m.position ASC
-  `
+  `,
   )
     .bind(homeId, billId)
     .all<BillRow>()
@@ -92,7 +92,7 @@ bills.post('/homes/:homeId/bills', async (c) => {
     `SELECT id, name, position
 FROM members
 WHERE home_id = ?
-ORDER BY position ASC;`
+ORDER BY position ASC;`,
   )
     .bind(homeId)
     .all()
@@ -116,7 +116,7 @@ ORDER BY position ASC;`
   const billStatement = c.env.DB.prepare(
     `INSERT INTO bills (id,home_id,title,total_cents) 
     VALUES (?, ?, ?,?)
-    `
+    `,
   ).bind(billId, homeId, title, totalCents)
 
   const shareStatements = shares.map((share) =>
@@ -125,8 +125,8 @@ ORDER BY position ASC;`
       INSERT INTO bill_shares
       (id,bill_id, member_id,amount_cents,paid_at)
       VALUES(?,?,?,?,?)
-    `
-    ).bind(share.id, billId, share.memberId, share.amountCents, share.paidAt)
+    `,
+    ).bind(share.id, billId, share.memberId, share.amountCents, share.paidAt),
   )
 
   await c.env.DB.batch([billStatement, ...shareStatements])
@@ -138,7 +138,7 @@ ORDER BY position ASC;`
       totalCents,
       shares,
     },
-    201
+    201,
   )
 })
 

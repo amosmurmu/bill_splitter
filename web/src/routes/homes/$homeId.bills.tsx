@@ -1,15 +1,14 @@
 import { createFileRoute, Link, Outlet } from '@tanstack/react-router'
-import { useBills, useCreateBill } from '@/src/features/bills/queries'
-import { useState } from 'react'
-import { formatMoney } from '@/src/utils/fmtMoney'
 import { MoveLeft } from 'lucide-react'
+import { useState } from 'react'
+import { useBills, useCreateBill } from '@/src/features/bills/queries'
+import { formatMoney } from '@/src/utils/fmtMoney'
 
 export const Route = createFileRoute('/homes/$homeId/bills')({
   component: BillsPage,
 })
 
 function BillsPage() {
-
   const { homeId } = Route.useParams()
   console.log('Bills page rendered:', homeId)
   const { data: bills, isLoading, isError } = useBills(homeId)
@@ -24,7 +23,7 @@ function BillsPage() {
     const totalCents = Math.round(Number(amount) * 100)
 
     if (!title.trim() || !Number.isFinite(totalCents) || totalCents <= 0) {
-      return;
+      return
     }
 
     createBill.mutate(
@@ -41,7 +40,11 @@ function BillsPage() {
   return (
     <main className="mx-auto max-w-3xl space-y-8 p-6">
       <div>
-        <Link to="/homes/$homeId" params={{ homeId }} className="text-sm text-gray-500 hover:underline">
+        <Link
+          to="/homes/$homeId"
+          params={{ homeId }}
+          className="text-sm text-gray-500 hover:underline"
+        >
           <MoveLeft /> Members
         </Link>
         <h1 className="mt-3 text-3xl font-bold">Bills</h1>
@@ -90,7 +93,9 @@ function BillsPage() {
         {isError && <p className="text-red-600">Could not load bills.</p>}
 
         {bills?.length === 0 && (
-          <p className="rounded-xl border p-5 text-gray-500">No bills yet. Create your first bill above.</p>
+          <p className="rounded-xl border p-5 text-gray-500">
+            No bills yet. Create your first bill above.
+          </p>
         )}
 
         {bills?.map((bill) => (
@@ -108,7 +113,6 @@ function BillsPage() {
           </Link>
         ))}
       </section>
-
 
       <Outlet />
     </main>

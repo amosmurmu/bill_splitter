@@ -24,4 +24,4 @@ type BillResponse = {
   }[]
 }
 
-export type { BillRow, BillResponse }
+export type { BillResponse, BillRow }

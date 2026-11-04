@@ -1,4 +1,3 @@
-
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useBalances } from '@/src/features/balances/queries'
 
@@ -14,15 +13,17 @@ function ExpensesPage() {
   const { homeId } = Route.useParams()
   const { data: balances, isLoading, isError } = useBalances(homeId)
 
-  const totalOutstanding = balances?.reduce(
-    (sum, balance) => sum + balance.outstandingCents,
-    0,
-  ) ?? 0
+  const totalOutstanding =
+    balances?.reduce((sum, balance) => sum + balance.outstandingCents, 0) ?? 0
 
   return (
     <main className="mx-auto max-w-3xl space-y-6 p-6">
       <div>
-        <Link to="/homes/$homeId" params={{ homeId }} className="text-sm text-gray-500 hover:underline">
+        <Link
+          to="/homes/$homeId"
+          params={{ homeId }}
+          className="text-sm text-gray-500 hover:underline"
+        >
           ← Members
         </Link>
         <h1 className="mt-3 text-3xl font-bold">Expenses</h1>
@@ -41,9 +42,18 @@ function ExpensesPage() {
         {isError && <p className="text-red-600">Could not load expenses.</p>}
 
         {balances?.map((balance) => (
-          <div key={balance.memberId} className="flex items-center justify-between rounded-xl border p-4">
+          <div
+            key={balance.memberId}
+            className="flex items-center justify-between rounded-xl border p-4"
+          >
             <span className="font-medium">{balance.name}</span>
-            <span className={balance.outstandingCents > 0 ? 'font-semibold text-orange-600' : 'font-semibold text-green-700'}>
+            <span
+              className={
+                balance.outstandingCents > 0
+                  ? 'font-semibold text-orange-600'
+                  : 'font-semibold text-green-700'
+              }
+            >
               {formatMoney(balance.outstandingCents)}
             </span>
           </div>

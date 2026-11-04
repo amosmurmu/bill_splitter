@@ -1,11 +1,8 @@
-import { useState } from 'react'
-import { Link, createFileRoute } from '@tanstack/react-router'
-import {
-  useMembers,
-  useCreateMember,
-} from '../../features/members/queries'
-import { Button } from '@/components/ui/button'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { MoveLeft } from 'lucide-react'
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { useCreateMember, useMembers } from '../../features/members/queries'
 
 export const Route = createFileRoute('/homes/$homeId/')({
   component: MembersPage,
@@ -34,23 +31,17 @@ function MembersPage() {
 
   return (
     <main className="mx-auto min-h-screen max-w-4xl px-6 py-12">
-      <Link
-        to="/"
-        className="text-sm text-muted-foreground hover:text-foreground"
-      >
+      <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
         <MoveLeft /> Back to homes
       </Link>
 
       <header className="mb-10 mt-6">
         <p className="text-sm text-muted-foreground">HOUSEHOLD</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight">
-          Members
-        </h1>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight">Members</h1>
         <p className="mt-2 text-muted-foreground">
           Manage the people sharing expenses in this home.
         </p>
       </header>
-
 
       <div className="flex flex-wrap gap-3">
         <Link
@@ -81,37 +72,26 @@ function MembersPage() {
             className="h-10 min-w-0 flex-1 rounded-md border bg-transparent px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
           />
 
-          <Button
-            type="submit"
-            disabled={!name.trim() || createMember.isPending}
-          >
+          <Button type="submit" disabled={!name.trim() || createMember.isPending}>
             {createMember.isPending ? 'Adding...' : 'Add member'}
           </Button>
         </form>
 
         {createMember.isError && (
-          <p className="mt-3 text-sm text-destructive">
-            Could not add member. Please try again.
-          </p>
+          <p className="mt-3 text-sm text-destructive">Could not add member. Please try again.</p>
         )}
       </section>
 
       <section>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-medium">All members</h2>
-          <span className="text-sm text-muted-foreground">
-            {members?.length ?? 0} members
-          </span>
+          <span className="text-sm text-muted-foreground">{members?.length ?? 0} members</span>
         </div>
 
-        {isLoading && (
-          <p className="text-sm text-muted-foreground">Loading members...</p>
-        )}
+        {isLoading && <p className="text-sm text-muted-foreground">Loading members...</p>}
 
         {isError && (
-          <p className="text-sm text-destructive">
-            Could not load members. Please refresh.
-          </p>
+          <p className="text-sm text-destructive">Could not load members. Please refresh.</p>
         )}
 
         {members?.length === 0 && (
@@ -125,19 +105,14 @@ function MembersPage() {
 
         <div className="divide-y rounded-xl border">
           {members?.map((member) => (
-            <div
-              key={member.id}
-              className="flex items-center gap-4 p-4"
-            >
+            <div key={member.id} className="flex items-center gap-4 p-4">
               <div className="flex size-10 items-center justify-center rounded-full bg-muted font-medium">
                 {member.name.charAt(0).toUpperCase()}
               </div>
 
               <div>
                 <p className="font-medium">{member.name}</p>
-                <p className="text-sm text-muted-foreground">
-                  Member {member.position + 1}
-                </p>
+                <p className="text-sm text-muted-foreground">Member {member.position + 1}</p>
               </div>
             </div>
           ))}

@@ -14,14 +14,22 @@ function groupBills(rows: BillRow[]): BillResponse[] {
       })
     }
 
-    if (row.share_id !== null) {
-      grouped.get(row.id)!.shares.push({
-        id: row.share_id,
-        memberId: row.member_id!,
-        memberName: row.member_name!,
-        amountCents: row.amount_cents!,
-        paidAt: row.paid_at,
-      })
+    if (
+      row.share_id !== null &&
+      row.member_id !== null &&
+      row.member_name !== null &&
+      row.amount_cents !== null
+    ) {
+      const bill = grouped.get(row.id)
+      if (bill) {
+        bill.shares.push({
+          id: row.share_id,
+          memberId: row.member_id,
+          memberName: row.member_name,
+          amountCents: row.amount_cents,
+          paidAt: row.paid_at,
+        })
+      }
     }
   }
 

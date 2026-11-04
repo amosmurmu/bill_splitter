@@ -1,10 +1,9 @@
-
-import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useBill, billKeys } from '@/src/features/bills/queries'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { MoveLeft } from 'lucide-react'
+import { billKeys, useBill } from '@/src/features/bills/queries'
 import { payShare } from '@/src/features/payments/api'
 import { formatMoney } from '@/src/utils/fmtMoney'
-import { MoveLeft } from 'lucide-react'
 
 export const Route = createFileRoute('/homes/$homeId/bills/$billId')({
   component: BillDetailsPage,
@@ -12,18 +11,13 @@ export const Route = createFileRoute('/homes/$homeId/bills/$billId')({
 
 function BillDetailsPage() {
   const { homeId, billId } = Route.useParams()
-  console.log("Debug and bill detail page render", homeId)
+  console.log('Debug and bill detail page render', homeId)
   const queryClient = useQueryClient()
   const { data: bill, isLoading, isError } = useBill(homeId, billId)
 
   const payment = useMutation({
-    mutationFn: ({
-      shareId,
-      idempotencyKey,
-    }: {
-      shareId: string
-      idempotencyKey: string
-    }) => payShare(billId, shareId, idempotencyKey),
+    mutationFn: ({ shareId, idempotencyKey }: { shareId: string; idempotencyKey: string }) =>
+      payShare(billId, shareId, idempotencyKey),
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: billKeys.detail(homeId, billId) })
@@ -42,7 +36,11 @@ function BillDetailsPage() {
   return (
     <main className="mx-auto max-w-3xl space-y-6 p-6">
       <div>
-        <Link to="/homes/$homeId/bills" params={{ homeId }} className="text-sm text-gray-500 hover:underline">
+        <Link
+          to="/homes/$homeId/bills"
+          params={{ homeId }}
+          className="text-sm text-gray-500 hover:underline"
+        >
           <MoveLeft /> All bills
         </Link>
         <h1 className="mt-3 text-3xl font-bold">{bill.title}</h1>
@@ -52,7 +50,9 @@ function BillDetailsPage() {
       <div className="rounded-xl border p-5">
         <div className="mb-2 flex justify-between text-sm">
           <span className="text-gray-500">Payment progress</span>
-          <span>{formatMoney(paidCents)} / {formatMoney(bill.totalCents)}</span>
+          <span>
+            {formatMoney(paidCents)} / {formatMoney(bill.totalCents)}
+          </span>
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-gray-100">
           <div
@@ -66,7 +66,10 @@ function BillDetailsPage() {
         <h2 className="text-xl font-semibold">Member shares</h2>
 
         {bill.shares.map((share) => (
-          <div key={share.id} className="flex items-center justify-between gap-4 rounded-xl border p-4">
+          <div
+            key={share.id}
+            className="flex items-center justify-between gap-4 rounded-xl border p-4"
+          >
             <div>
               <p className="font-medium">{share.memberName ?? share.memberId}</p>
               <p className="text-sm text-gray-500">{formatMoney(share.amountCents)}</p>
@@ -76,6 +79,7 @@ function BillDetailsPage() {
               <span className="text-sm font-medium text-green-700">Paid</span>
             ) : (
               <button
+                type="button"
                 disabled={payment.isPending}
                 onClick={() =>
                   payment.mutate({

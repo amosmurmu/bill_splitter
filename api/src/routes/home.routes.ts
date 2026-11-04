@@ -5,9 +5,7 @@ import { createMemberSchema } from '../validators/members.validators'
 const homes = new Hono<{ Bindings: Env }>()
 
 homes.get('/homes', async (c) => {
-  const { results } = await c.env.DB.prepare(
-    'SELECT id, name FROM homes ORDER BY rowid DESC'
-  ).all()
+  const { results } = await c.env.DB.prepare('SELECT id, name FROM homes ORDER BY rowid DESC').all()
 
   return c.json(results)
 })
@@ -25,9 +23,7 @@ homes.post('/homes', async (c) => {
 
   const id = crypto.randomUUID()
 
-  await c.env.DB.prepare('INSERT INTO homes (id, name) VALUES (?, ?)')
-    .bind(id, name)
-    .run()
+  await c.env.DB.prepare('INSERT INTO homes (id, name) VALUES (?, ?)').bind(id, name).run()
 
   return c.json({ id, name }, 201)
 })
@@ -39,7 +35,7 @@ homes.get('/homes/:homeId/members', async (c) => {
     `SELECT id, home_id AS homeId, name, position
      FROM members
      WHERE home_id = ?
-     ORDER BY position ASC`
+     ORDER BY position ASC`,
   )
     .bind(homeId)
     .all()
@@ -71,7 +67,7 @@ homes.post('/homes/:homeId/members', async (c) => {
     )
      FROM homes
      WHERE id = ?;
-    `
+    `,
   )
     .bind(id, homeId, name, homeId, homeId)
     .run()

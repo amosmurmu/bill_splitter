@@ -11,10 +11,7 @@ export async function getBill(homeId: string, billId: string) {
   return data
 }
 
-export async function createBill(
-  homeId: string,
-  input: { title: string; totalCents: number }
-) {
+export async function createBill(homeId: string, input: { title: string; totalCents: number }) {
   const { data } = await api.post<Bill>(`/homes/${homeId}/bills`, input)
   return data
 }
