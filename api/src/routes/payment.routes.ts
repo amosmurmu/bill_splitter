@@ -16,7 +16,7 @@ payments.post('/bills/:billId/shares/:shareId/pay', async (c) => {
     SELECT id, bill_id, member_id, amount_cents, paid_at, idempotency_key
     FROM bill_shares
     WHERE id = ? AND bill_id = ?
-    `
+    `,
   )
     .bind(shareId, billId)
     .first<{
@@ -51,7 +51,7 @@ payments.post('/bills/:billId/shares/:shareId/pay', async (c) => {
     UPDATE bill_shares
     SET paid_at = ? , idempotency_key = ?
     WHERE id = ? AND bill_id = ? AND paid_at IS NULL 
-    `
+    `,
   )
     .bind(paidAt, idempotencyKey, shareId, billId)
     .run()
@@ -60,7 +60,7 @@ payments.post('/bills/:billId/shares/:shareId/pay', async (c) => {
     const updatedShare = await c.env.DB.prepare(
       `SELECT id, member_id, amount_cents, paid_at, idempotency_key
        FROM bill_shares
-       WHERE id = ? AND bill_id = ?`
+       WHERE id = ? AND bill_id = ?`,
     )
       .bind(shareId, billId)
       .first<{

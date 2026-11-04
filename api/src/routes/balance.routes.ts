@@ -5,9 +5,7 @@ const balances = new Hono<{ Bindings: Env }>()
 balances.get('/homes/:homeId/balances', async (c) => {
   const homeId = c.req.param('homeId')
 
-  const home = await c.env.DB.prepare('SELECT id FROM homes WHERE id = ?')
-    .bind(homeId)
-    .first()
+  const home = await c.env.DB.prepare('SELECT id FROM homes WHERE id = ?').bind(homeId).first()
 
   if (!home) {
     return c.json({ error: 'Home not found' }, 404)

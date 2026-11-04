@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
-import homes from './routes/home.routes'
-import bills from './routes/bill.routes'
-import payments from './routes/payment.routes'
 import balances from './routes/balance.routes'
+import bills from './routes/bill.routes'
+import homes from './routes/home.routes'
+import payments from './routes/payment.routes'
 
 const app = new Hono<{ Bindings: Env }>()
 
