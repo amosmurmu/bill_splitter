@@ -14,6 +14,7 @@ import { Route as HomesHomeIdRouteImport } from './routes/homes/$homeId'
 import { Route as HomesHomeIdIndexRouteImport } from './routes/homes/$homeId.index'
 import { Route as HomesHomeIdBillsRouteImport } from './routes/homes/$homeId.bills'
 import { Route as HomesHomeIdExpensesRouteImport } from './routes/homes/$homeId.expenses'
+import { Route as HomesHomeIdBillsIndexRouteImport } from './routes/homes/$homeId.bills.index'
 import { Route as HomesHomeIdBillsBillIdRouteImport } from './routes/homes/$homeId.bills.$billId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -41,6 +42,11 @@ const HomesHomeIdExpensesRoute = HomesHomeIdExpensesRouteImport.update({
   path: '/expenses',
   getParentRoute: () => HomesHomeIdRoute,
 } as any)
+const HomesHomeIdBillsIndexRoute = HomesHomeIdBillsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => HomesHomeIdBillsRoute,
+} as any)
 const HomesHomeIdBillsBillIdRoute = HomesHomeIdBillsBillIdRouteImport.update({
   id: '/$billId',
   path: '/$billId',
@@ -54,13 +60,14 @@ export interface FileRoutesByFullPath {
   '/homes/$homeId/expenses': typeof HomesHomeIdExpensesRoute
   '/homes/$homeId/': typeof HomesHomeIdIndexRoute
   '/homes/$homeId/bills/$billId': typeof HomesHomeIdBillsBillIdRoute
+  '/homes/$homeId/bills/': typeof HomesHomeIdBillsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/homes/$homeId/bills': typeof HomesHomeIdBillsRouteWithChildren
   '/homes/$homeId/expenses': typeof HomesHomeIdExpensesRoute
   '/homes/$homeId': typeof HomesHomeIdIndexRoute
   '/homes/$homeId/bills/$billId': typeof HomesHomeIdBillsBillIdRoute
+  '/homes/$homeId/bills': typeof HomesHomeIdBillsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -70,6 +77,7 @@ export interface FileRoutesById {
   '/homes/$homeId/expenses': typeof HomesHomeIdExpensesRoute
   '/homes/$homeId/': typeof HomesHomeIdIndexRoute
   '/homes/$homeId/bills/$billId': typeof HomesHomeIdBillsBillIdRoute
+  '/homes/$homeId/bills/': typeof HomesHomeIdBillsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -80,13 +88,14 @@ export interface FileRouteTypes {
     | '/homes/$homeId/expenses'
     | '/homes/$homeId/'
     | '/homes/$homeId/bills/$billId'
+    | '/homes/$homeId/bills/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/homes/$homeId/bills'
     | '/homes/$homeId/expenses'
     | '/homes/$homeId'
     | '/homes/$homeId/bills/$billId'
+    | '/homes/$homeId/bills'
   id:
     | '__root__'
     | '/'
@@ -95,6 +104,7 @@ export interface FileRouteTypes {
     | '/homes/$homeId/expenses'
     | '/homes/$homeId/'
     | '/homes/$homeId/bills/$billId'
+    | '/homes/$homeId/bills/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -139,6 +149,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomesHomeIdExpensesRouteImport
       parentRoute: typeof HomesHomeIdRoute
     }
+    '/homes/$homeId/bills/': {
+      id: '/homes/$homeId/bills/'
+      path: '/'
+      fullPath: '/homes/$homeId/bills/'
+      preLoaderRoute: typeof HomesHomeIdBillsIndexRouteImport
+      parentRoute: typeof HomesHomeIdBillsRoute
+    }
     '/homes/$homeId/bills/$billId': {
       id: '/homes/$homeId/bills/$billId'
       path: '/$billId'
@@ -151,10 +168,12 @@ declare module '@tanstack/react-router' {
 
 interface HomesHomeIdBillsRouteChildren {
   HomesHomeIdBillsBillIdRoute: typeof HomesHomeIdBillsBillIdRoute
+  HomesHomeIdBillsIndexRoute: typeof HomesHomeIdBillsIndexRoute
 }
 
 const HomesHomeIdBillsRouteChildren: HomesHomeIdBillsRouteChildren = {
   HomesHomeIdBillsBillIdRoute: HomesHomeIdBillsBillIdRoute,
+  HomesHomeIdBillsIndexRoute: HomesHomeIdBillsIndexRoute,
 }
 
 const HomesHomeIdBillsRouteWithChildren =
