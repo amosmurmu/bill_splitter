@@ -5,11 +5,7 @@ import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
-  plugins: [
-    tanstackRouter({ target: 'react', autoCodeSplitting: true }),
-    react(),
-    tailwindcss(),
-  ],
+  plugins: [tanstackRouter({ target: 'react' }), react(), tailwindcss()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./', import.meta.url)),

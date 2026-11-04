@@ -11,8 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HomesHomeIdRouteImport } from './routes/homes/$homeId'
-import { Route as HomesHomeIdBalancesRouteImport } from './routes/homes/$homeId.balances'
+import { Route as HomesHomeIdIndexRouteImport } from './routes/homes/$homeId.index'
 import { Route as HomesHomeIdBillsRouteImport } from './routes/homes/$homeId.bills'
+import { Route as HomesHomeIdExpensesRouteImport } from './routes/homes/$homeId.expenses'
 import { Route as HomesHomeIdBillsBillIdRouteImport } from './routes/homes/$homeId.bills.$billId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -25,14 +26,19 @@ const HomesHomeIdRoute = HomesHomeIdRouteImport.update({
   path: '/homes/$homeId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const HomesHomeIdBalancesRoute = HomesHomeIdBalancesRouteImport.update({
-  id: '/balances',
-  path: '/balances',
+const HomesHomeIdIndexRoute = HomesHomeIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => HomesHomeIdRoute,
 } as any)
 const HomesHomeIdBillsRoute = HomesHomeIdBillsRouteImport.update({
   id: '/bills',
   path: '/bills',
+  getParentRoute: () => HomesHomeIdRoute,
+} as any)
+const HomesHomeIdExpensesRoute = HomesHomeIdExpensesRouteImport.update({
+  id: '/expenses',
+  path: '/expenses',
   getParentRoute: () => HomesHomeIdRoute,
 } as any)
 const HomesHomeIdBillsBillIdRoute = HomesHomeIdBillsBillIdRouteImport.update({
@@ -44,23 +50,25 @@ const HomesHomeIdBillsBillIdRoute = HomesHomeIdBillsBillIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/homes/$homeId': typeof HomesHomeIdRouteWithChildren
-  '/homes/$homeId/balances': typeof HomesHomeIdBalancesRoute
   '/homes/$homeId/bills': typeof HomesHomeIdBillsRouteWithChildren
+  '/homes/$homeId/expenses': typeof HomesHomeIdExpensesRoute
+  '/homes/$homeId/': typeof HomesHomeIdIndexRoute
   '/homes/$homeId/bills/$billId': typeof HomesHomeIdBillsBillIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/homes/$homeId': typeof HomesHomeIdRouteWithChildren
-  '/homes/$homeId/balances': typeof HomesHomeIdBalancesRoute
   '/homes/$homeId/bills': typeof HomesHomeIdBillsRouteWithChildren
+  '/homes/$homeId/expenses': typeof HomesHomeIdExpensesRoute
+  '/homes/$homeId': typeof HomesHomeIdIndexRoute
   '/homes/$homeId/bills/$billId': typeof HomesHomeIdBillsBillIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/homes/$homeId': typeof HomesHomeIdRouteWithChildren
-  '/homes/$homeId/balances': typeof HomesHomeIdBalancesRoute
   '/homes/$homeId/bills': typeof HomesHomeIdBillsRouteWithChildren
+  '/homes/$homeId/expenses': typeof HomesHomeIdExpensesRoute
+  '/homes/$homeId/': typeof HomesHomeIdIndexRoute
   '/homes/$homeId/bills/$billId': typeof HomesHomeIdBillsBillIdRoute
 }
 export interface FileRouteTypes {
@@ -68,22 +76,24 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/homes/$homeId'
-    | '/homes/$homeId/balances'
     | '/homes/$homeId/bills'
+    | '/homes/$homeId/expenses'
+    | '/homes/$homeId/'
     | '/homes/$homeId/bills/$billId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/homes/$homeId'
-    | '/homes/$homeId/balances'
     | '/homes/$homeId/bills'
+    | '/homes/$homeId/expenses'
+    | '/homes/$homeId'
     | '/homes/$homeId/bills/$billId'
   id:
     | '__root__'
     | '/'
     | '/homes/$homeId'
-    | '/homes/$homeId/balances'
     | '/homes/$homeId/bills'
+    | '/homes/$homeId/expenses'
+    | '/homes/$homeId/'
     | '/homes/$homeId/bills/$billId'
   fileRoutesById: FileRoutesById
 }
@@ -108,11 +118,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomesHomeIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/homes/$homeId/balances': {
-      id: '/homes/$homeId/balances'
-      path: '/balances'
-      fullPath: '/homes/$homeId/balances'
-      preLoaderRoute: typeof HomesHomeIdBalancesRouteImport
+    '/homes/$homeId/': {
+      id: '/homes/$homeId/'
+      path: '/'
+      fullPath: '/homes/$homeId/'
+      preLoaderRoute: typeof HomesHomeIdIndexRouteImport
       parentRoute: typeof HomesHomeIdRoute
     }
     '/homes/$homeId/bills': {
@@ -120,6 +130,13 @@ declare module '@tanstack/react-router' {
       path: '/bills'
       fullPath: '/homes/$homeId/bills'
       preLoaderRoute: typeof HomesHomeIdBillsRouteImport
+      parentRoute: typeof HomesHomeIdRoute
+    }
+    '/homes/$homeId/expenses': {
+      id: '/homes/$homeId/expenses'
+      path: '/expenses'
+      fullPath: '/homes/$homeId/expenses'
+      preLoaderRoute: typeof HomesHomeIdExpensesRouteImport
       parentRoute: typeof HomesHomeIdRoute
     }
     '/homes/$homeId/bills/$billId': {
@@ -144,13 +161,15 @@ const HomesHomeIdBillsRouteWithChildren =
   HomesHomeIdBillsRoute._addFileChildren(HomesHomeIdBillsRouteChildren)
 
 interface HomesHomeIdRouteChildren {
-  HomesHomeIdBalancesRoute: typeof HomesHomeIdBalancesRoute
   HomesHomeIdBillsRoute: typeof HomesHomeIdBillsRouteWithChildren
+  HomesHomeIdExpensesRoute: typeof HomesHomeIdExpensesRoute
+  HomesHomeIdIndexRoute: typeof HomesHomeIdIndexRoute
 }
 
 const HomesHomeIdRouteChildren: HomesHomeIdRouteChildren = {
-  HomesHomeIdBalancesRoute: HomesHomeIdBalancesRoute,
   HomesHomeIdBillsRoute: HomesHomeIdBillsRouteWithChildren,
+  HomesHomeIdExpensesRoute: HomesHomeIdExpensesRoute,
+  HomesHomeIdIndexRoute: HomesHomeIdIndexRoute,
 }
 
 const HomesHomeIdRouteWithChildren = HomesHomeIdRoute._addFileChildren(
