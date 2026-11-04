@@ -13,6 +13,6 @@ export async function getMembers(homeId: string): Promise<Member[]> {
 }
 
 export async function createMember(homeId: string, name: string) {
-  const { data } = await api.post(`/home/${homeId}/members`, { name })
+  const { data } = await api.post(`/homes/${homeId}/members`, { name })
   return data
 }
