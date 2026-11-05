@@ -40,23 +40,27 @@ function HomesPage() {
         <h2 className="text-lg font-medium">Create a home</h2>
         <p className="mt-1 text-sm text-muted-foreground">Start by creating a household.</p>
 
-        <form onSubmit={handleSubmit} className="mt-4 flex gap-3">
+        <form
+          onSubmit={handleSubmit}
+          className="mt-4 flex flex-col gap-3 sm:flex-row"
+        >
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Flat 302"
             maxLength={100}
-            className="h-10 flex-1"
+            className="h-10 w-full min-w-0 flex-1"
           />
 
           <Button
             type="submit"
             disabled={!name.trim() || createHome.isPending}
-            className="cursor-pointer"
+            className="h-10 w-full cursor-pointer sm:w-auto sm:shrink-0"
           >
             {createHome.isPending ? 'Creating...' : 'Create home'}
           </Button>
         </form>
+
 
         {createHome.isError && (
           <p className="mt-3 text-sm text-destructive">Could not create home. Please try again.</p>

@@ -1,126 +1,136 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { MoveLeft } from 'lucide-react'
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { useCreateMember, useMembers } from '@/features/members/queries'
+import { createFileRoute } from '@tanstack/react-router'
+import { ArrowDownLeft, ArrowUpRight, Receipt, Users } from 'lucide-react'
 
 export const Route = createFileRoute('/homes/$homeId/')({
-  component: MembersPage,
+  component: OverviewPage,
 })
 
-function MembersPage() {
+function OverviewPage() {
   const { homeId } = Route.useParams()
-  const [name, setName] = useState('')
 
-  const { data: members, isLoading, isError } = useMembers(homeId)
-  const createMember = useCreateMember()
+  const stats = [
+    {
+      label: 'Total bills',
+      value: '₹12,450',
+      icon: Receipt,
+      description: 'Across all household bills',
+    },
+    {
+      label: 'Members',
+      value: '4',
+      icon: Users,
+      description: 'People in this household',
+    },
+    {
+      label: 'You owe',
+      value: '₹1,250',
+      icon: ArrowUpRight,
+      description: 'Your pending payments',
+    },
+    {
+      label: 'You are owed',
+      value: '₹3,400',
+      icon: ArrowDownLeft,
+      description: 'Pending from other members',
+    },
+  ]
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-
-    const trimmedName = name.trim()
-    if (!trimmedName) return
-
-    createMember.mutate(
-      { homeId, name: trimmedName },
-      {
-        onSuccess: () => setName(''),
-      },
-    )
-  }
+  const recentBills = [
+    { title: 'Monthly groceries', date: 'Nov 04, 2026', amount: '₹3,200', status: 'Partially paid' },
+    { title: 'Electricity bill', date: 'Nov 02, 2026', amount: '₹1,850', status: 'Paid' },
+    { title: 'Internet bill', date: 'Oct 29, 2026', amount: '₹999', status: 'Paid' },
+  ]
 
   return (
-    <main className="mx-auto min-h-screen max-w-4xl px-6 py-12">
-      <Link
-        to="/"
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <MoveLeft className="size-4" /> Back to homes
-      </Link>
-      <header className="mb-10 mt-6">
-        <p className="text-sm text-muted-foreground">HOUSEHOLD</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight">Members</h1>
-        <p className="mt-2 text-muted-foreground">
-          Manage the people sharing expenses in this home.
+    <div className="space-y-8">
+      <header>
+        <p className="text-sm font-medium text-muted-foreground">
+          HOUSEHOLD OVERVIEW
+        </p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight">
+          Overview
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Here's what's happening with your household.
         </p>
       </header>
 
-      <div className="flex flex-wrap gap-3">
-        <Link
-          to="/homes/$homeId/bills"
-          params={{ homeId }}
-          className="inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/80"
-        >
-          Bills
-        </Link>
-        <Link
-          to="/homes/$homeId/expenses"
-          params={{ homeId }}
-          className="inline-flex h-9 items-center rounded-md border border-border bg-background px-4 text-sm font-medium hover:bg-muted"
-        >
-          Expenses
-        </Link>
-      </div>
+      {/* Summary cards */}
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {stats.map((stat) => {
+          const Icon = stat.icon
 
-      <section className="mb-10 rounded-xl border border-border bg-card p-6 text-card-foreground">
-        <h2 className="text-lg font-medium">Add a member</h2>
-
-        <form onSubmit={handleSubmit} className="mt-4 flex gap-3">
-          <Input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Member name"
-            maxLength={100}
-            className="h-10 flex-1"
-          />
-
-          <Button type="submit" disabled={!name.trim() || createMember.isPending}>
-            {createMember.isPending ? 'Adding...' : 'Add member'}
-          </Button>
-        </form>
-
-        {createMember.isError && (
-          <p className="mt-3 text-sm text-destructive">Could not add member. Please try again.</p>
-        )}
-      </section>
-
-      <section>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-medium">All members</h2>
-          <span className="text-sm text-muted-foreground">{members?.length ?? 0} members</span>
-        </div>
-
-        {isLoading && <p className="text-sm text-muted-foreground">Loading members...</p>}
-
-        {isError && (
-          <p className="text-sm text-destructive">Could not load members. Please refresh.</p>
-        )}
-
-        {members?.length === 0 && (
-          <div className="rounded-xl border border-dashed border-border bg-card/50 p-10 text-center">
-            <p className="font-medium">No members yet</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Add the people who share expenses in this home.
-            </p>
-          </div>
-        )}
-
-        <div className="divide-y divide-border rounded-xl border border-border bg-card">
-          {members?.map((member) => (
-            <div key={member.id} className="flex items-center gap-4 p-4">
-              <div className="flex size-10 items-center justify-center rounded-full bg-accent font-medium text-accent-foreground">
-                {member.name.charAt(0).toUpperCase()}
+          return (
+            <div
+              key={stat.label}
+              className="rounded-xl border bg-card p-5"
+            >
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">
+                  {stat.label}
+                </p>
+                <Icon className="size-4 text-muted-foreground" />
               </div>
 
+              <p className="mt-4 text-2xl font-semibold tracking-tight">
+                {stat.value}
+              </p>
+
+              <p className="mt-1 text-xs text-muted-foreground">
+                {stat.description}
+              </p>
+            </div>
+          )
+        })}
+      </section>
+
+      {/* Recent bills */}
+      <section className="rounded-xl border bg-card">
+        <div className="flex items-center justify-between border-b p-5">
+          <div>
+            <h2 className="font-semibold">Recent bills</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Latest bills added to this household.
+            </p>
+          </div>
+          <span className="text-xs text-muted-foreground">
+            3 recent
+          </span>
+        </div>
+
+        <div className="divide-y">
+          {recentBills.map((bill) => (
+            <div
+              key={bill.title}
+              className="flex flex-wrap items-center justify-between gap-3 px-5 py-4"
+            >
               <div>
-                <p className="font-medium">{member.name}</p>
-                <p className="text-sm text-muted-foreground">Member {member.position + 1}</p>
+                <p className="text-sm font-medium">{bill.title}</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {bill.date}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-5">
+                <span className="text-sm font-medium">{bill.amount}</span>
+                <span
+                  className={`rounded-full px-2.5 py-1 text-xs font-medium ${bill.status === 'Paid'
+                    ? 'bg-emerald-500/10 text-emerald-600'
+                    : 'bg-amber-500/10 text-amber-600'
+                    }`}
+                >
+                  {bill.status}
+                </span>
               </div>
             </div>
           ))}
         </div>
       </section>
-    </main>
+
+      {/* Temporary route info */}
+      <p className="text-xs text-muted-foreground">
+        Household ID: {homeId}
+      </p>
+    </div>
   )
 }

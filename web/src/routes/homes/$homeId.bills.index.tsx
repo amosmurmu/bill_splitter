@@ -54,7 +54,7 @@ function BillsPage() {
           params={{ homeId }}
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
-          <MoveLeft className="size-4" /> Members
+          <MoveLeft className="size-4" /> Overview
         </Link>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight">Bills</h1>
         <p className="mt-1 text-muted-foreground">Manage shared bills for this home.</p>

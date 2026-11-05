@@ -1,13 +1,11 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useBalances } from '@/features/balances/queries'
+import { MoveLeftIcon } from 'lucide-react'
+import { formatMoney } from '@/utils/fmtMoney'
 
 export const Route = createFileRoute('/homes/$homeId/expenses')({
   component: ExpensesPage,
 })
-
-function formatMoney(cents: number) {
-  return `₹${(cents / 100).toFixed(2)}`
-}
 
 function ExpensesPage() {
   const { homeId } = Route.useParams()
@@ -20,13 +18,13 @@ function ExpensesPage() {
     <main className="mx-auto min-h-screen max-w-4xl space-y-6 px-6 py-12">
       <div>
         <Link
-          to="/homes/$homeId"
+          to="/homes/$homeId/bills"
           params={{ homeId }}
           className="text-sm text-muted-foreground hover:text-foreground"
         >
-          ← Members
+          <MoveLeftIcon /> Bills
         </Link>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight">Expenses</h1>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight">Balances</h1>
         <p className="mt-1 text-muted-foreground">Outstanding balances for this home.</p>
       </div>
 

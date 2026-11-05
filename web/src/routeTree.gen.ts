@@ -14,6 +14,7 @@ import { Route as HomesHomeIdRouteImport } from './routes/homes/$homeId'
 import { Route as HomesHomeIdIndexRouteImport } from './routes/homes/$homeId.index'
 import { Route as HomesHomeIdBillsRouteImport } from './routes/homes/$homeId.bills'
 import { Route as HomesHomeIdExpensesRouteImport } from './routes/homes/$homeId.expenses'
+import { Route as HomesHomeIdMembersRouteImport } from './routes/homes/$homeId.members'
 import { Route as HomesHomeIdBillsIndexRouteImport } from './routes/homes/$homeId.bills.index'
 import { Route as HomesHomeIdBillsBillIdRouteImport } from './routes/homes/$homeId.bills.$billId'
 
@@ -42,6 +43,11 @@ const HomesHomeIdExpensesRoute = HomesHomeIdExpensesRouteImport.update({
   path: '/expenses',
   getParentRoute: () => HomesHomeIdRoute,
 } as any)
+const HomesHomeIdMembersRoute = HomesHomeIdMembersRouteImport.update({
+  id: '/members',
+  path: '/members',
+  getParentRoute: () => HomesHomeIdRoute,
+} as any)
 const HomesHomeIdBillsIndexRoute = HomesHomeIdBillsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/homes/$homeId': typeof HomesHomeIdRouteWithChildren
   '/homes/$homeId/bills': typeof HomesHomeIdBillsRouteWithChildren
   '/homes/$homeId/expenses': typeof HomesHomeIdExpensesRoute
+  '/homes/$homeId/members': typeof HomesHomeIdMembersRoute
   '/homes/$homeId/': typeof HomesHomeIdIndexRoute
   '/homes/$homeId/bills/$billId': typeof HomesHomeIdBillsBillIdRoute
   '/homes/$homeId/bills/': typeof HomesHomeIdBillsIndexRoute
@@ -65,6 +72,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/homes/$homeId/expenses': typeof HomesHomeIdExpensesRoute
+  '/homes/$homeId/members': typeof HomesHomeIdMembersRoute
   '/homes/$homeId': typeof HomesHomeIdIndexRoute
   '/homes/$homeId/bills/$billId': typeof HomesHomeIdBillsBillIdRoute
   '/homes/$homeId/bills': typeof HomesHomeIdBillsIndexRoute
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   '/homes/$homeId': typeof HomesHomeIdRouteWithChildren
   '/homes/$homeId/bills': typeof HomesHomeIdBillsRouteWithChildren
   '/homes/$homeId/expenses': typeof HomesHomeIdExpensesRoute
+  '/homes/$homeId/members': typeof HomesHomeIdMembersRoute
   '/homes/$homeId/': typeof HomesHomeIdIndexRoute
   '/homes/$homeId/bills/$billId': typeof HomesHomeIdBillsBillIdRoute
   '/homes/$homeId/bills/': typeof HomesHomeIdBillsIndexRoute
@@ -86,6 +95,7 @@ export interface FileRouteTypes {
     | '/homes/$homeId'
     | '/homes/$homeId/bills'
     | '/homes/$homeId/expenses'
+    | '/homes/$homeId/members'
     | '/homes/$homeId/'
     | '/homes/$homeId/bills/$billId'
     | '/homes/$homeId/bills/'
@@ -93,6 +103,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/homes/$homeId/expenses'
+    | '/homes/$homeId/members'
     | '/homes/$homeId'
     | '/homes/$homeId/bills/$billId'
     | '/homes/$homeId/bills'
@@ -102,6 +113,7 @@ export interface FileRouteTypes {
     | '/homes/$homeId'
     | '/homes/$homeId/bills'
     | '/homes/$homeId/expenses'
+    | '/homes/$homeId/members'
     | '/homes/$homeId/'
     | '/homes/$homeId/bills/$billId'
     | '/homes/$homeId/bills/'
@@ -149,6 +161,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomesHomeIdExpensesRouteImport
       parentRoute: typeof HomesHomeIdRoute
     }
+    '/homes/$homeId/members': {
+      id: '/homes/$homeId/members'
+      path: '/members'
+      fullPath: '/homes/$homeId/members'
+      preLoaderRoute: typeof HomesHomeIdMembersRouteImport
+      parentRoute: typeof HomesHomeIdRoute
+    }
     '/homes/$homeId/bills/': {
       id: '/homes/$homeId/bills/'
       path: '/'
@@ -182,12 +201,14 @@ const HomesHomeIdBillsRouteWithChildren =
 interface HomesHomeIdRouteChildren {
   HomesHomeIdBillsRoute: typeof HomesHomeIdBillsRouteWithChildren
   HomesHomeIdExpensesRoute: typeof HomesHomeIdExpensesRoute
+  HomesHomeIdMembersRoute: typeof HomesHomeIdMembersRoute
   HomesHomeIdIndexRoute: typeof HomesHomeIdIndexRoute
 }
 
 const HomesHomeIdRouteChildren: HomesHomeIdRouteChildren = {
   HomesHomeIdBillsRoute: HomesHomeIdBillsRouteWithChildren,
   HomesHomeIdExpensesRoute: HomesHomeIdExpensesRoute,
+  HomesHomeIdMembersRoute: HomesHomeIdMembersRoute,
   HomesHomeIdIndexRoute: HomesHomeIdIndexRoute,
 }
 
