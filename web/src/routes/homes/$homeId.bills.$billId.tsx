@@ -1,11 +1,10 @@
-import { billKeys, useBill } from '@/features/bills/queries'
-import { payShare } from '@/features/payments/api'
-import { formatMoney } from '@/utils/fmtMoney'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { MoveLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-
+import { billKeys, useBill } from '@/features/bills/queries'
+import { payShare } from '@/features/payments/api'
+import { formatMoney } from '@/utils/fmtMoney'
 
 export const Route = createFileRoute('/homes/$homeId/bills/$billId')({
   component: BillDetailsPage,

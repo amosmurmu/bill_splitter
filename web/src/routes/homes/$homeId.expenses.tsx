@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useBalances } from '@/features/balances/queries'
 import { MoveLeftIcon } from 'lucide-react'
+import { useBalances } from '@/features/balances/queries'
 import { formatMoney } from '@/utils/fmtMoney'
 
 export const Route = createFileRoute('/homes/$homeId/expenses')({

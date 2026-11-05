@@ -40,10 +40,7 @@ function HomesPage() {
         <h2 className="text-lg font-medium">Create a home</h2>
         <p className="mt-1 text-sm text-muted-foreground">Start by creating a household.</p>
 
-        <form
-          onSubmit={handleSubmit}
-          className="mt-4 flex flex-col gap-3 sm:flex-row"
-        >
+        <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-3 sm:flex-row">
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -60,7 +57,6 @@ function HomesPage() {
             {createHome.isPending ? 'Creating...' : 'Create home'}
           </Button>
         </form>
-
 
         {createHome.isError && (
           <p className="mt-3 text-sm text-destructive">Could not create home. Please try again.</p>

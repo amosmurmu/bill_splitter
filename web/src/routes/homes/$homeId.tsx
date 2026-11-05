@@ -1,10 +1,6 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { AppSidebar } from '@/components/app-sidebar'
-import {
-  SidebarProvider,
-  SidebarInset,
-  SidebarTrigger,
-} from '@/components/ui/sidebar'
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 
 export const Route = createFileRoute('/homes/$homeId')({
   component: HomeLayout,

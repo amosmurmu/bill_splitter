@@ -1,11 +1,5 @@
-
-import {
-  ArrowLeftRight,
-  LayoutDashboard,
-  Receipt,
-  Users,
-} from 'lucide-react'
 import { Link, useRouterState } from '@tanstack/react-router'
+import { ArrowLeftRight, LayoutDashboard, Receipt, Users } from 'lucide-react'
 
 import {
   Sidebar,
@@ -59,9 +53,7 @@ export function AppSidebar({ homeId }: AppSidebarProps) {
           <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Receipt className="size-4" />
           </div>
-          <span className="font-semibold tracking-tight">
-            Bill Splitter
-          </span>
+          <span className="font-semibold tracking-tight">Bill Splitter</span>
         </Link>
       </SidebarHeader>
 
@@ -75,8 +67,7 @@ export function AppSidebar({ homeId }: AppSidebarProps) {
                 const isActive =
                   item.title === 'Overview'
                     ? pathname === item.url || pathname === `${item.url}/`
-                    : pathname === item.url ||
-                    pathname.startsWith(`${item.url}/`)
+                    : pathname === item.url || pathname.startsWith(`${item.url}/`)
 
                 return (
                   <SidebarMenuItem key={item.title}>
