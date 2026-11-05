@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useBills, useCreateBill } from '@/features/bills/queries'
 import { formatMoney } from '@/utils/fmtMoney'
+import { getErrorMessage } from '@/utils/getErrorMessage'
 
 export const Route = createFileRoute('/homes/$homeId/bills/')({
   component: BillsPage,
@@ -74,9 +75,8 @@ function BillsPage() {
         />
 
         <Input
-          type="number"
-          min="1"
-          step="1"
+          type="text"
+          inputMode="numeric"
           value={amount}
           onChange={(e) => {
             const value = e.target.value
@@ -94,7 +94,9 @@ function BillsPage() {
         </Button>
 
         {createBill.isError && (
-          <p className="text-sm text-destructive">Could not create bill. Please try again.</p>
+          <p className="text-sm text-destructive">
+            {getErrorMessage(createBill.error, 'Could not create bill. Please try again later.')}
+          </p>
         )}
       </form>
 
