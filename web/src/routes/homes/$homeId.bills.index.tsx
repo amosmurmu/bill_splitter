@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { MoveLeft } from 'lucide-react'
 import { useState } from 'react'
-import { useBills, useCreateBill } from '@/src/features/bills/queries'
-import { formatMoney } from '@/src/utils/fmtMoney'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { useBills, useCreateBill } from '@/features/bills/queries'
+import { formatMoney } from '@/utils/fmtMoney'
 
 export const Route = createFileRoute('/homes/$homeId/bills/')({
   component: BillsPage,
@@ -45,62 +47,65 @@ function BillsPage() {
   }
 
   return (
-    <main className="mx-auto max-w-3xl space-y-8 p-6">
+    <main className="mx-auto min-h-screen max-w-4xl space-y-8 px-6 py-12">
       <div>
         <Link
           to="/homes/$homeId"
           params={{ homeId }}
-          className="text-sm text-gray-500 hover:underline"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
-          <MoveLeft /> Members
+          <MoveLeft className="size-4" /> Members
         </Link>
-        <h1 className="mt-3 text-3xl font-bold">Bills</h1>
-        <p className="mt-1 text-gray-500">Manage shared bills for this home.</p>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight">Bills</h1>
+        <p className="mt-1 text-muted-foreground">Manage shared bills for this home.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-3 rounded-xl border p-5">
-        <h2 className="text-lg font-semibold">Create a bill</h2>
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-3 rounded-xl border border-border bg-card p-6 text-card-foreground"
+      >
+        <h2 className="text-lg font-medium">Create a bill</h2>
 
-        <input
+        <Input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="e.g. Electricity bill"
           required
-          className="w-full rounded-lg border px-3 py-2"
         />
 
-        <input
+        <Input
           type="number"
           min="1"
           step="1"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value
+
+            if (!/^\d*$/.test(value)) return
+
+            setAmount(value)
+          }}
           placeholder="Total amount (₹)"
           required
-          className="w-full rounded-lg border px-3 py-2"
         />
 
-        <button
-          type="submit"
-          disabled={createBill.isPending}
-          className="rounded-lg bg-black px-4 py-2 text-white disabled:opacity-50"
-        >
+        <Button type="submit" disabled={createBill.isPending} className="cursor-pointer">
           {createBill.isPending ? 'Creating...' : 'Create bill'}
-        </button>
+        </Button>
 
         {createBill.isError && (
-          <p className="text-sm text-red-600">Could not create bill. Please try again.</p>
+          <p className="text-sm text-destructive">Could not create bill. Please try again.</p>
         )}
       </form>
 
       <section className="space-y-3">
-        <h2 className="text-xl font-semibold">All bills</h2>
+        <h2 className="text-lg font-medium">All bills</h2>
 
-        {isLoading && <p className="text-gray-500">Loading bills...</p>}
-        {isError && <p className="text-red-600">Could not load bills.</p>}
+        {isLoading && <p className="text-sm text-muted-foreground">Loading bills...</p>}
+        {isError && <p className="text-sm text-destructive">Could not load bills.</p>}
 
         {bills?.length === 0 && (
-          <p className="rounded-xl border p-5 text-gray-500">
+          <p className="rounded-xl border border-dashed border-border bg-card/50 p-5 text-muted-foreground">
             No bills yet. Create your first bill above.
           </p>
         )}
@@ -110,13 +115,13 @@ function BillsPage() {
             key={bill.id}
             to="/homes/$homeId/bills/$billId"
             params={{ homeId, billId: bill.id }}
-            className="flex items-center justify-between rounded-xl border p-4 transition hover:bg-gray-50"
+            className="flex items-center justify-between rounded-xl border border-border bg-card p-4 text-card-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
           >
             <div>
-              <h3 className="font-semibold">{bill.title}</h3>
-              <p className="text-sm text-gray-500">{bill.shares.length} shares</p>
+              <h3 className="font-medium">{bill.title}</h3>
+              <p className="text-sm text-muted-foreground">{bill.shares.length} shares</p>
             </div>
-            <span className="font-semibold">{formatMoney(bill.totalCents)}</span>
+            <span className="font-medium">{formatMoney(bill.totalCents)}</span>
           </Link>
         ))}
       </section>

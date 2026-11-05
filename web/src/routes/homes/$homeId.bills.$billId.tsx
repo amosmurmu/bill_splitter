@@ -1,9 +1,11 @@
+import { billKeys, useBill } from '@/features/bills/queries'
+import { payShare } from '@/features/payments/api'
+import { formatMoney } from '@/utils/fmtMoney'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { MoveLeft } from 'lucide-react'
-import { billKeys, useBill } from '@/src/features/bills/queries'
-import { payShare } from '@/src/features/payments/api'
-import { formatMoney } from '@/src/utils/fmtMoney'
+import { Button } from '@/components/ui/button'
+
 
 export const Route = createFileRoute('/homes/$homeId/bills/$billId')({
   component: BillDetailsPage,
@@ -26,59 +28,71 @@ function BillDetailsPage() {
     },
   })
 
-  if (isLoading) return <main className="p-6">Loading bill...</main>
-  if (isError || !bill) return <main className="p-6 text-red-600">Could not load this bill.</main>
+  if (isLoading) {
+    return (
+      <main className="mx-auto min-h-screen max-w-4xl px-6 py-12 text-muted-foreground">
+        Loading bill...
+      </main>
+    )
+  }
+  if (isError || !bill) {
+    return (
+      <main className="mx-auto min-h-screen max-w-4xl px-6 py-12 text-destructive">
+        Could not load this bill.
+      </main>
+    )
+  }
 
   const paidCents = bill.shares
     .filter((share) => share.paidAt !== null)
     .reduce((sum, share) => sum + share.amountCents, 0)
 
   return (
-    <main className="mx-auto max-w-3xl space-y-6 p-6">
+    <main className="mx-auto min-h-screen max-w-4xl space-y-6 px-6 py-12">
       <div>
         <Link
           to="/homes/$homeId/bills"
           params={{ homeId }}
-          className="text-sm text-gray-500 hover:underline"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
-          <MoveLeft /> All bills
+          <MoveLeft className="size-4" /> All bills
         </Link>
-        <h1 className="mt-3 text-3xl font-bold">{bill.title}</h1>
-        <p className="mt-1 text-gray-500">Total: {formatMoney(bill.totalCents)}</p>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight">{bill.title}</h1>
+        <p className="mt-1 text-muted-foreground">Total: {formatMoney(bill.totalCents)}</p>
       </div>
 
-      <div className="rounded-xl border p-5">
+      <div className="rounded-xl border border-border bg-card p-5 text-card-foreground">
         <div className="mb-2 flex justify-between text-sm">
-          <span className="text-gray-500">Payment progress</span>
+          <span className="text-muted-foreground">Payment progress</span>
           <span>
             {formatMoney(paidCents)} / {formatMoney(bill.totalCents)}
           </span>
         </div>
-        <div className="h-2 overflow-hidden rounded-full bg-gray-100">
+        <div className="h-2 overflow-hidden rounded-full bg-muted">
           <div
-            className="h-full rounded-full bg-green-600"
+            className="h-full rounded-full bg-primary"
             style={{ width: `${bill.totalCents > 0 ? (paidCents / bill.totalCents) * 100 : 0}%` }}
           />
         </div>
       </div>
 
       <section className="space-y-3">
-        <h2 className="text-xl font-semibold">Member shares</h2>
+        <h2 className="text-lg font-medium">Member shares</h2>
 
         {bill.shares.map((share) => (
           <div
             key={share.id}
-            className="flex items-center justify-between gap-4 rounded-xl border p-4"
+            className="flex items-center justify-between gap-4 rounded-xl border border-border bg-card p-4 text-card-foreground"
           >
             <div>
               <p className="font-medium">{share.memberName ?? share.memberId}</p>
-              <p className="text-sm text-gray-500">{formatMoney(share.amountCents)}</p>
+              <p className="text-sm text-muted-foreground">{formatMoney(share.amountCents)}</p>
             </div>
 
             {share.paidAt ? (
-              <span className="text-sm font-medium text-green-700">Paid</span>
+              <span className="text-sm font-medium text-primary">Paid</span>
             ) : (
-              <button
+              <Button
                 type="button"
                 disabled={payment.isPending}
                 onClick={() =>
@@ -87,16 +101,16 @@ function BillDetailsPage() {
                     idempotencyKey: crypto.randomUUID(),
                   })
                 }
-                className="rounded-lg bg-black px-3 py-2 text-sm text-white disabled:opacity-50"
+                className="cursor-pointer"
               >
                 Mark as paid
-              </button>
+              </Button>
             )}
           </div>
         ))}
 
         {payment.isError && (
-          <p className="text-sm text-red-600">Payment update failed. Refresh and try again.</p>
+          <p className="text-sm text-destructive">Payment update failed. Refresh and try again.</p>
         )}
       </section>
     </main>

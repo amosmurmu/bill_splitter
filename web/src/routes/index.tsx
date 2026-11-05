@@ -2,7 +2,8 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { MoveRight } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { useCreateHome, useHomes } from '../features/homes/queries'
+import { Input } from '@/components/ui/input'
+import { useCreateHome, useHomes } from '@/features/homes/queries'
 
 export const Route = createFileRoute('/')({
   component: HomesPage,
@@ -35,23 +36,23 @@ function HomesPage() {
         </p>
       </header>
 
-      <section className="mb-10 rounded-xl border p-6">
+      <section className="mb-10 rounded-xl border border-border bg-card p-6 text-card-foreground">
         <h2 className="text-lg font-medium">Create a home</h2>
         <p className="mt-1 text-sm text-muted-foreground">Start by creating a household.</p>
 
         <form onSubmit={handleSubmit} className="mt-4 flex gap-3">
-          <input
+          <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Flat 302"
             maxLength={100}
-            className="h-10 min-w-0 flex-1 rounded-md border bg-transparent px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            className="h-10 flex-1"
           />
 
           <Button
             type="submit"
             disabled={!name.trim() || createHome.isPending}
-            className={`hover:cursor-pointer`}
+            className="cursor-pointer"
           >
             {createHome.isPending ? 'Creating...' : 'Create home'}
           </Button>
@@ -75,7 +76,7 @@ function HomesPage() {
         )}
 
         {homes?.length === 0 && (
-          <div className="rounded-xl border border-dashed p-10 text-center">
+          <div className="rounded-xl border border-dashed border-border bg-card/50 p-10 text-center">
             <p className="font-medium">No homes yet</p>
             <p className="mt-1 text-sm text-muted-foreground">
               Create your first home to get started.
@@ -89,7 +90,7 @@ function HomesPage() {
               key={home.id}
               to="/homes/$homeId"
               params={{ homeId: home.id }}
-              className="group rounded-xl border p-5 transition-colors hover:bg-muted/50"
+              className="group rounded-xl border border-border bg-card p-5 text-card-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
             >
               <div className="flex items-center justify-between">
                 <h3 className="font-medium">{home.name}</h3>

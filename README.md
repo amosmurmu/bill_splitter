@@ -162,7 +162,7 @@ We will run `pnpm install && pnpm check && pnpm typecheck && pnpm test` on your 
 
 I started by sketching the database schema on paper before implementing the API. I identified four main entities: `homes`, `members`, `bills`, and `bill_shares`.
 
-I also saw helpers.ts for reference 
+I also saw helpers.ts for reference
 
 - A home can have multiple members.
 - A home can have multiple bills.
@@ -177,7 +177,7 @@ I chose integer cents (`total_cents` and `amount_cents`) instead of floating-poi
 
 also there is a mention to not use decimals so this approach
 
-I simplify 1 dollar to 1 rupee so its easy to reason 
+I simplify 1 dollar to 1 rupee so its easy to reason
 
 This avoids floating-point precision issues and makes calculations predictable. The API also validates that amounts are positive whole-rupee values, while storing them as integer paise.
 

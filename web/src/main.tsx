@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { routeTree } from './routeTree.gen'
 import './index.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ThemeProvider } from './components/theme-provider'
 
 const router = createRouter({ routeTree })
 const queryClient = new QueryClient()
@@ -20,7 +21,15 @@ if (!rootEl) throw new Error('root element missing')
 createRoot(rootEl).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+        storageKey="bill-splitter-theme"
+      >
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </QueryClientProvider>
   </StrictMode>,
 )
