@@ -155,3 +155,156 @@ You must understand every line you submit. We check this with your video and in 
 5. Paste the repository link and the video link in the application form.
 
 We will run `pnpm install && pnpm check && pnpm typecheck && pnpm test` on your repository.
+
+## Engineering Decisions
+
+### 1. Relational database schema designed around the core entities
+
+I started by sketching the database schema on paper before implementing the API. I identified four main entities: `homes`, `members`, `bills`, and `bill_shares`.
+
+I also saw helpers.ts for reference 
+
+- A home can have multiple members.
+- A home can have multiple bills.
+- Each bill has multiple shares, one for each member.
+- Each share tracks its amount and payment status independently.
+
+I chose this structure because bills and payments need to be tracked at the individual member level, rather than storing everything inside a single bill record.
+
+### 2. Store money as integer cents, not floating-point values
+
+I chose integer cents (`total_cents` and `amount_cents`) instead of floating-point values for monetary calculations.
+
+also there is a mention to not use decimals so this approach
+
+I simplify 1 dollar to 1 rupee so its easy to reason 
+
+This avoids floating-point precision issues and makes calculations predictable. The API also validates that amounts are positive whole-rupee values, while storing them as integer paise.
+
+For example, ₹100 is stored as `10000` paise.
+
+### 3. Deterministic split and remainder distribution
+
+When creating a bill, I divide the total amount equally among the home's members using integer arithmetic.
+
+If the amount does not divide evenly, I distribute the remaining paise one at a time across members in their stored `position` order.
+
+For example, ₹100 divided among three members results in:
+
+- Member 1: ₹33.34
+- Member 2: ₹33.33
+- Member 3: ₹33.33
+
+I added a `position` field to members to make remainder distribution deterministic.
+
+**Trade-off:** This approach is simple, predictable, and avoids floating-point calculations. However, members earlier in the position order may receive an extra paise when there is a remainder. The distribution is not randomized.
+
+### 4. Idempotent payment handling with conditional database updates
+
+I implemented payment marking using an `Idempotency-Key` request header.
+
+The payment endpoint follows these steps:
+
+1. Check whether the bill share exists.
+2. Check whether it has already been paid.
+3. If the same idempotency key is reused, return the existing payment result.
+4. Otherwise, attempt a conditional update using `WHERE paid_at IS NULL`.
+5. If another request has already updated the share, read the latest state and return the appropriate response like 409.
+
+This prevents duplicate payment updates and handles concurrent attempts to pay the same share.
+
+The endpoint returns a conflict response (`409`) when a share has already been paid using a different idempotency key.
+
+### 5. Feature-based frontend architecture
+
+I organized the frontend by feature instead of grouping every API function, query, and type into global folders.
+
+For example:
+
+```text
+src/features/
+  homes/
+  members/
+  bills/
+  balances/
+  payments/
+```
+
+Each feature keeps its API functions, React Query hooks, and related types together.
+
+I separated API communication from query management:
+
+- `api.ts` handles HTTP requests through Axios.
+- `queries.ts` contains TanStack Query hooks, caching, mutations, and query invalidation.
+- Route components handle the page UI and user interactions.
+
+I chose this structure to keep features easier to understand, maintain, and extend without mixing API logic with UI components.
+
+---
+
+## Architecture
+
+![Bill Splitter Arch](./web/public/bill_splitter_arch_1.svg)
+
+## Data Flow
+
+### Bill creation
+
+```text
+User submits bill
+       |
+       v
+Frontend validates amount
+       |
+       v
+POST /api/homes/:homeId/bills
+       |
+       v
+Backend validates request
+       |
+       v
+Fetch home members in position order
+       |
+       v
+Calculate equal shares and remainder
+       |
+       v
+Store bill and individual shares in D1
+       |
+       v
+Return created bill
+       |
+       v
+Invalidate bill list and balance queries
+```
+
+### Payment update
+
+```text
+User clicks "Mark as paid"
+       |
+       v
+Generate Idempotency-Key
+       |
+       v
+POST /api/bills/:billId/shares/:shareId/pay
+       |
+       v
+Check existing payment state
+       |
+       v
+Conditional UPDATE (paid_at IS NULL)
+       |
+       v
+Return payment result / conflict
+       |
+       v
+Invalidate bill details, bill list
+and balance queries
+```
+
+## Key Trade-off
+
+I prioritized simple, deterministic integer-based calculations over more complicated monetary calculations. This makes the split logic easier to reason about and ensures that the sum of all member shares always equals the original bill amount.
+
+The trade-off is that remainder distribution follows member position order, so the extra paise are not distributed randomly.

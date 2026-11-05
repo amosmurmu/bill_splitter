@@ -10,7 +10,7 @@ export const Route = createFileRoute('/homes/$homeId/bills/')({
 
 function BillsPage() {
   const { homeId } = Route.useParams()
-  console.log('Bills page rendered:', homeId)
+  // console.log('Bills page rendered:', homeId)
   const { data: bills, isLoading, isError } = useBills(homeId)
   const createBill = useCreateBill(homeId)
 
@@ -20,11 +20,18 @@ function BillsPage() {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    const totalCents = Math.round(Number(amount) * 100)
+    const rupees = Number(amount)
 
-    if (!title.trim() || !Number.isFinite(totalCents) || totalCents <= 0) {
+    if (
+      !title.trim() ||
+      !Number.isSafeInteger(rupees) ||
+      rupees <= 0 ||
+      !Number.isSafeInteger(rupees * 100)
+    ) {
       return
     }
+
+    const totalCents = rupees * 100
 
     createBill.mutate(
       { title: title.trim(), totalCents },
@@ -64,8 +71,8 @@ function BillsPage() {
 
         <input
           type="number"
-          min="0.01"
-          step="0.01"
+          min="1"
+          step="1"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           placeholder="Total amount (₹)"
